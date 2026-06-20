@@ -1,0 +1,798 @@
+/* dashboard.css
+   Modern, futuristic dark-mode styling system with glassmorphic cards and glowing alerts.
+   Tailored for Smart City Traffic Control Rooms. */
+
+:root {
+    --bg-main: #0a0c10;
+    --bg-card: rgba(16, 20, 30, 0.65);
+    --border-glow: rgba(0, 242, 254, 0.15);
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --cyan-neon: #00f2fe;
+    --blue-neon: #4facfe;
+    --green-mint: #00e676;
+    --yellow-warning: #ffea00;
+    --orange-alert: #ff9100;
+    --red-neon: #ff1744;
+    --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.15);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cyan-neon);
+}
+
+/* Font helpers */
+.font-mono {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+}
+
+.text-red { color: var(--red-neon); }
+.text-yellow { color: var(--yellow-warning); }
+.text-green { color: var(--green-mint); }
+
+/* Command Center Layout Grid */
+.command-center-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 15px;
+    gap: 15px;
+}
+
+/* 1. Header HUD */
+.hud-header {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glow);
+    border-radius: 8px;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.header-logo {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--text-primary);
+}
+
+.logo-accent {
+    background: linear-gradient(135deg, var(--cyan-neon) 0%, var(--blue-neon) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.badge-twin {
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(0, 242, 254, 0.12);
+    border: 1px solid var(--cyan-neon);
+    color: var(--cyan-neon);
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 10px;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+}
+
+.header-widgets {
+    display: flex;
+    gap: 30px;
+}
+
+.widget-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.widget-item .label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.widget-item .val {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Blinking Status Indicator */
+.status-glowing {
+    color: var(--green-mint) !important;
+    position: relative;
+}
+
+.status-glowing::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--green-mint);
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 10px var(--green-mint);
+    animation: pulse 1.5s infinite;
+}
+
+/* 2. Main Grid Layout Dashboard */
+.grid-container {
+    display: grid;
+    grid-template-columns: 2.2fr 2.6fr 1.8fr;
+    grid-template-rows: 1.8fr 1fr;
+    gap: 15px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* Cards System styling */
+.grid-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+    transition: border-color 0.3s;
+}
+
+.grid-card:hover {
+    border-color: rgba(0, 242, 254, 0.2);
+}
+
+.card-header {
+    padding: 12px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+}
+
+/* viewport scroll blocks */
+.cctv-viewport, .map-viewport, .alerts-viewport, .predictor-viewport, .analytics-grid, .cases-viewport {
+    flex-grow: 1;
+    overflow: auto;
+    position: relative;
+}
+
+/* ====================================================
+   WIDGETS DETAIL STYLES
+   ==================================================== */
+
+/* Live CCTV Stream Viewport */
+.cctv-viewport {
+    background-color: #050608;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#cctv-canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Dynamic Scanline overlay */
+.cctv-scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.cctv-overlay-text {
+    position: absolute;
+    bottom: 12px;
+    left: 15px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 3px 8px;
+    border-radius: 4px;
+    z-index: 3;
+}
+
+.junction-label {
+    background: rgba(0, 242, 254, 0.08);
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    color: var(--cyan-neon);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* Map Card and Heatmap Toggle */
+.heatmap-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-toggle {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+}
+
+.btn-toggle.active {
+    background: rgba(0, 242, 254, 0.12);
+    border-color: var(--cyan-neon);
+    color: var(--cyan-neon);
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+}
+
+.map-viewport {
+    background-color: #121622;
+}
+
+#map-container {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Leaflet Dark Theme Hack overrides */
+.leaflet-container {
+    background: #0f121d !important;
+}
+
+.leaflet-tile {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) opacity(85%);
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-glow);
+    backdrop-filter: blur(10px);
+}
+
+.leaflet-popup-content h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--cyan-neon);
+}
+
+.leaflet-popup-content p {
+    font-size: 11px;
+    margin-bottom: 3px;
+    color: var(--text-secondary);
+}
+
+.leaflet-popup-content button {
+    margin-top: 8px;
+    width: 100%;
+    background: rgba(0, 242, 254, 0.1);
+    border: 1px solid var(--cyan-neon);
+    color: var(--cyan-neon);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.leaflet-popup-content button:hover {
+    background: rgba(0, 242, 254, 0.2);
+}
+
+/* Event Alerts Timeline Panel */
+.badge-alert {
+    background: rgba(255, 23, 68, 0.08);
+    border: 1px solid rgba(255, 23, 68, 0.25);
+    color: var(--red-neon);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.alerts-viewport {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.empty-alerts {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-top: 50px;
+}
+
+/* Alert Notification Card style */
+.alert-card {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 3px solid var(--blue-neon);
+    border-top: 1px solid rgba(255, 255, 255, 0.02);
+    border-right: 1px solid rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    animation: slideIn 0.3s forwards;
+}
+
+.alert-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    transform: translateX(4px);
+}
+
+.alert-card.type-critical {
+    border-left-color: var(--red-neon);
+    background: rgba(255, 23, 68, 0.015);
+}
+
+.alert-card.type-warning {
+    border-left-color: var(--orange-alert);
+}
+
+.alert-card.type-infraction {
+    border-left-color: var(--yellow-warning);
+    background: rgba(255, 234, 0, 0.01);
+}
+
+.alert-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+}
+
+.alert-meta .time {
+    color: var(--text-secondary);
+}
+
+.alert-meta .title {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.alert-card.type-critical .alert-meta .title { color: var(--red-neon); }
+.alert-card.type-warning .alert-meta .title { color: var(--orange-alert); }
+.alert-card.type-infraction .alert-meta .title { color: var(--yellow-warning); }
+
+.alert-desc {
+    font-size: 11.5px;
+    color: var(--text-primary);
+    line-height: 1.35;
+}
+
+/* Predictor Widget */
+.badge-engine {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.predictor-viewport {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.predictor-row {
+    display: flex;
+    width: 100%;
+}
+
+.predictor-row.flex-row {
+    gap: 12px;
+}
+
+.p-block {
+    flex-grow: 1;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.p-block.inline {
+    width: calc(50% - 6px);
+}
+
+.p-block .label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.p-block .val {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.p-block.inline .val {
+    font-size: 20px;
+}
+
+.status-badge {
+    position: absolute;
+    right: 18px;
+    top: calc(50% - 10px);
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+}
+
+/* Colors for predictor status indicators */
+.status-badge.status-low {
+    background: rgba(0, 230, 118, 0.08);
+    border: 1px solid rgba(0, 230, 118, 0.25);
+    color: var(--green-mint);
+}
+
+.status-badge.status-medium {
+    background: rgba(255, 234, 0, 0.08);
+    border: 1px solid rgba(255, 234, 0, 0.25);
+    color: var(--yellow-warning);
+}
+
+.status-badge.status-high {
+    background: rgba(255, 145, 0, 0.08);
+    border: 1px solid rgba(255, 145, 0, 0.25);
+    color: var(--orange-alert);
+}
+
+.status-badge.status-gridlock {
+    background: rgba(255, 23, 68, 0.08);
+    border: 1px solid rgba(255, 23, 68, 0.25);
+    color: var(--red-neon);
+    box-shadow: 0 0 10px rgba(255, 23, 68, 0.1);
+    animation: flash 1s infinite alternate;
+}
+
+/* Analytics Cards Grid */
+.analytics-grid {
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+}
+
+.analytics-tile {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.analytics-tile .label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.analytics-tile .val {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.analytics-tile .val.val-warning {
+    color: var(--orange-alert);
+}
+
+/* Table Card Logs */
+.cases-viewport {
+    padding: 10px;
+}
+
+.cases-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    text-align: left;
+}
+
+.cases-table th {
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-transform: uppercase;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+}
+
+.cases-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+}
+
+.cases-table tbody tr {
+    transition: background 0.15s;
+}
+
+.cases-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.table-empty {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 30px 0 !important;
+}
+
+/* Interactive case action button */
+.btn-review {
+    background: rgba(0, 242, 254, 0.08);
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    color: var(--cyan-neon);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-review:hover {
+    background: var(--cyan-neon);
+    color: #000;
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+}
+
+/* ====================================================
+   3. EVIDENCE REVIEW MODAL SCREEN
+   ==================================================== */
+.evidence-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(3, 4, 6, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    background: #0f121d;
+    border: 1px solid var(--border-glow);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 980px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(0, 242, 254, 0.15);
+    animation: zoomIn 0.3s forwards;
+}
+
+.modal-header {
+    padding: 15px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, var(--cyan-neon) 0%, var(--blue-neon) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-close:hover {
+    color: var(--red-neon);
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Stitched Summary Image Panel */
+.evidence-summary-container {
+    width: 100%;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+.evidence-summary-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Crops grid layout */
+.evidence-crops-row {
+    display: flex;
+    gap: 15px;
+}
+
+.crop-box {
+    width: 50%;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+}
+
+.crop-box h3 {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.crop-box img {
+    max-height: 130px;
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+/* Metadata summary grid */
+.evidence-metadata-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    padding: 15px;
+}
+
+.meta-field {
+    font-size: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.meta-field .label {
+    color: var(--text-secondary);
+    width: 120px;
+    font-weight: 600;
+}
+
+.meta-field .val {
+    font-weight: 600;
+}
+
+/* ====================================================
+   4. KEYFRAMES ANIMATIONS
+   ==================================================== */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(0, 230, 118, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+}
+
+@keyframes flash {
+    0% { background: rgba(255, 23, 68, 0.08); box-shadow: 0 0 5px rgba(255, 23, 68, 0.1); }
+    100% { background: rgba(255, 23, 68, 0.2); box-shadow: 0 0 15px rgba(255, 23, 68, 0.4); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1.0); }
+}

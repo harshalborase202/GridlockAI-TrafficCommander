@@ -1,0 +1,1263 @@
+/* dashboard.css
+   Modern, futuristic dark-mode styling system with glassmorphic cards and glowing alerts.
+   Tailored for Smart City Traffic Control Rooms. */
+
+:root {
+    --bg-900: #0a0e1a;       /* page background */
+    --bg-800: #111827;       /* card background */
+    --bg-700: #1a2235;       /* elevated card */
+    --accent-cyan: #00d4ff;  /* primary accent */
+    --accent-green: #00ff88; /* online / success */
+    --accent-amber: #ffaa00; /* warning */
+    --accent-red: #ff4444;   /* danger / violation */
+    --text-primary: #f0f4ff;
+    --text-secondary: #8892a4;
+    --border: rgba(255,255,255,0.08);
+
+    /* Keep old layout variables mapped for backward compatibility */
+    --bg-main: var(--bg-900);
+    --bg-card: var(--bg-800);
+    --border-glow: var(--border);
+    --cyan-neon: var(--accent-cyan);
+    --blue-neon: #4facfe;
+    --green-mint: var(--accent-green);
+    --yellow-warning: var(--accent-amber);
+    --orange-alert: var(--accent-amber);
+    --red-neon: var(--accent-red);
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body, html {
+    font-family: var(--font-sans);
+    background-color: var(--bg-900);
+    color: var(--text-primary);
+}
+
+body, td, p {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.font-mono, .metric-number, .val, #clock-display {
+    font-family: 'Inter', 'Courier New', Courier, monospace;
+    font-weight: 600 !important;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+
+.label, label, th, .card-header h2 {
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Status dot animation */
+.status-glowing {
+    position: relative;
+    padding-left: 14px;
+}
+.status-glowing::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: var(--accent-green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent-green);
+    animation: statusPulse 1.5s infinite ease-in-out;
+}
+@keyframes statusPulse {
+    0%, 100% {
+        opacity: 0.4;
+        box-shadow: 0 0 2px var(--accent-green);
+    }
+    50% {
+        opacity: 1;
+        box-shadow: 0 0 10px var(--accent-green);
+    }
+}
+
+/* Pulse glow class for WS real-time updates */
+@keyframes pulseGlow {
+    0% {
+        text-shadow: 0 0 0px var(--accent-cyan);
+    }
+    50% {
+        text-shadow: 0 0 10px var(--accent-cyan);
+        color: var(--accent-cyan);
+    }
+    100% {
+        text-shadow: 0 0 0px var(--accent-cyan);
+    }
+}
+.pulse-glow {
+    animation: pulseGlow 0.5s ease-in-out;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.15);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cyan-neon);
+}
+
+/* Font helpers */
+.font-mono {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+}
+
+.text-red { color: var(--red-neon); }
+.text-yellow { color: var(--yellow-warning); }
+.text-green { color: var(--green-mint); }
+
+/* Command Center Layout Grid */
+.command-center-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 15px;
+    gap: 15px;
+}
+
+/* 1. Header HUD */
+.hud-header {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glow);
+    border-radius: 8px;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.header-logo {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--text-primary);
+}
+
+.logo-accent {
+    background: linear-gradient(135deg, var(--cyan-neon) 0%, var(--blue-neon) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.badge-twin {
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(0, 242, 254, 0.12);
+    border: 1px solid var(--cyan-neon);
+    color: var(--cyan-neon);
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 10px;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+}
+
+.header-widgets {
+    display: flex;
+    gap: 30px;
+}
+
+.widget-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.widget-item .label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.widget-item .val {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Blinking Status Indicator */
+.status-glowing {
+    color: var(--green-mint) !important;
+    position: relative;
+}
+
+.status-glowing::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--green-mint);
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 10px var(--green-mint);
+    animation: pulse 1.5s infinite;
+}
+
+/* 2. Main Grid Layout Dashboard */
+.grid-container {
+    display: grid;
+    grid-template-columns: 2.2fr 2.6fr 1.8fr;
+    grid-template-rows: 1.8fr 1fr;
+    gap: 15px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* Cards System styling */
+.grid-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+    transition: border-color 0.3s;
+}
+
+.grid-card:hover {
+    border-color: rgba(0, 242, 254, 0.2);
+}
+
+.card-header {
+    padding: 12px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+}
+
+/* viewport scroll blocks */
+.cctv-viewport, .map-viewport, .alerts-viewport, .predictor-viewport, .analytics-grid, .cases-viewport {
+    flex-grow: 1;
+    overflow: auto;
+    position: relative;
+}
+
+/* ====================================================
+   WIDGETS DETAIL STYLES
+   ==================================================== */
+
+/* Live CCTV Stream Viewport */
+.cctv-viewport {
+    background-color: #050608;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#cctv-canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Dynamic Scanline overlay */
+.cctv-scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.cctv-overlay-text {
+    position: absolute;
+    bottom: 12px;
+    left: 15px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 3px 8px;
+    border-radius: 4px;
+    z-index: 3;
+}
+
+.junction-label {
+    background: rgba(0, 242, 254, 0.08);
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    color: var(--cyan-neon);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* Map Card and Heatmap Toggle */
+.heatmap-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-toggle {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+}
+
+.btn-toggle.active {
+    background: rgba(0, 242, 254, 0.12);
+    border-color: var(--cyan-neon);
+    color: var(--cyan-neon);
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+}
+
+.map-viewport {
+    background-color: #121622;
+}
+
+#map-container {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Leaflet Dark Theme Hack overrides */
+.leaflet-container {
+    background: #0f121d !important;
+}
+
+.leaflet-tile {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) opacity(85%);
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-glow);
+    backdrop-filter: blur(10px);
+}
+
+.leaflet-popup-content h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--cyan-neon);
+}
+
+.leaflet-popup-content p {
+    font-size: 11px;
+    margin-bottom: 3px;
+    color: var(--text-secondary);
+}
+
+.leaflet-popup-content button {
+    margin-top: 8px;
+    width: 100%;
+    background: rgba(0, 242, 254, 0.1);
+    border: 1px solid var(--cyan-neon);
+    color: var(--cyan-neon);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.leaflet-popup-content button:hover {
+    background: rgba(0, 242, 254, 0.2);
+}
+
+/* Event Alerts Timeline Panel */
+.badge-alert {
+    background: rgba(255, 23, 68, 0.08);
+    border: 1px solid rgba(255, 23, 68, 0.25);
+    color: var(--red-neon);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.alerts-viewport {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.empty-alerts {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-top: 50px;
+}
+
+/* Alert Notification Card style */
+.alert-card {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 3px solid var(--blue-neon);
+    border-top: 1px solid rgba(255, 255, 255, 0.02);
+    border-right: 1px solid rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    animation: slideIn 0.3s forwards;
+}
+
+.alert-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    transform: translateX(4px);
+}
+
+.alert-card.type-critical {
+    border-left-color: var(--red-neon);
+    background: rgba(255, 23, 68, 0.015);
+}
+
+.alert-card.type-warning {
+    border-left-color: var(--orange-alert);
+}
+
+.alert-card.type-infraction {
+    border-left-color: var(--yellow-warning);
+    background: rgba(255, 234, 0, 0.01);
+}
+
+.alert-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+}
+
+.alert-meta .time {
+    color: var(--text-secondary);
+}
+
+.alert-meta .title {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.alert-card.type-critical .alert-meta .title { color: var(--red-neon); }
+.alert-card.type-warning .alert-meta .title { color: var(--orange-alert); }
+.alert-card.type-infraction .alert-meta .title { color: var(--yellow-warning); }
+
+.alert-desc {
+    font-size: 11.5px;
+    color: var(--text-primary);
+    line-height: 1.35;
+}
+
+/* Predictor Widget */
+.badge-engine {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.predictor-viewport {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.predictor-row {
+    display: flex;
+    width: 100%;
+}
+
+.predictor-row.flex-row {
+    gap: 12px;
+}
+
+.p-block {
+    flex-grow: 1;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.p-block.inline {
+    width: calc(50% - 6px);
+}
+
+.p-block .label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.p-block .val {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.p-block.inline .val {
+    font-size: 20px;
+}
+
+.status-badge {
+    position: absolute;
+    right: 18px;
+    top: calc(50% - 10px);
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+}
+
+/* Colors for predictor status indicators */
+.status-badge.status-low {
+    background: rgba(0, 230, 118, 0.08);
+    border: 1px solid rgba(0, 230, 118, 0.25);
+    color: var(--green-mint);
+}
+
+.status-badge.status-medium {
+    background: rgba(255, 234, 0, 0.08);
+    border: 1px solid rgba(255, 234, 0, 0.25);
+    color: var(--yellow-warning);
+}
+
+.status-badge.status-high {
+    background: rgba(255, 145, 0, 0.08);
+    border: 1px solid rgba(255, 145, 0, 0.25);
+    color: var(--orange-alert);
+}
+
+.status-badge.status-gridlock {
+    background: rgba(255, 23, 68, 0.08);
+    border: 1px solid rgba(255, 23, 68, 0.25);
+    color: var(--red-neon);
+    box-shadow: 0 0 10px rgba(255, 23, 68, 0.1);
+    animation: flash 1s infinite alternate;
+}
+
+/* Analytics Cards Grid */
+.analytics-grid {
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+}
+
+.analytics-tile {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.analytics-tile .label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.analytics-tile .val {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.analytics-tile .val.val-warning {
+    color: var(--orange-alert);
+}
+
+/* Table Card Logs */
+.cases-viewport {
+    padding: 10px;
+}
+
+.cases-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    text-align: left;
+}
+
+.cases-table th {
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-transform: uppercase;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+}
+
+.cases-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+}
+
+.cases-table tbody tr {
+    transition: background 0.15s;
+}
+
+.cases-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.table-empty {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 30px 0 !important;
+}
+
+/* Interactive case action button */
+.btn-review {
+    background: rgba(0, 242, 254, 0.08);
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    color: var(--cyan-neon);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-review:hover {
+    background: var(--cyan-neon);
+    color: #000;
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+}
+
+/* ====================================================
+   3. EVIDENCE REVIEW MODAL SCREEN
+   ==================================================== */
+.evidence-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(3, 4, 6, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    background: #0f121d;
+    border: 1px solid var(--border-glow);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 980px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(0, 242, 254, 0.15);
+    animation: zoomIn 0.3s forwards;
+}
+
+.modal-header {
+    padding: 15px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, var(--cyan-neon) 0%, var(--blue-neon) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-close:hover {
+    color: var(--red-neon);
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Stitched Summary Image Panel */
+.evidence-summary-container {
+    width: 100%;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+.evidence-summary-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Crops grid layout */
+.evidence-crops-row {
+    display: flex;
+    gap: 15px;
+}
+
+.crop-box {
+    width: 50%;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+}
+
+.crop-box h3 {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.crop-box img {
+    max-height: 130px;
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+/* Metadata summary grid */
+.evidence-metadata-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    padding: 15px;
+}
+
+.meta-field {
+    font-size: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.meta-field .label {
+    color: var(--text-secondary);
+    width: 120px;
+    font-weight: 600;
+}
+
+.meta-field .val {
+    font-weight: 600;
+}
+
+/* ====================================================
+   4. KEYFRAMES ANIMATIONS
+   ==================================================== */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(0, 230, 118, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+}
+
+@keyframes flash {
+    0% { background: rgba(255, 23, 68, 0.08); box-shadow: 0 0 5px rgba(255, 23, 68, 0.1); }
+    100% { background: rgba(255, 23, 68, 0.2); box-shadow: 0 0 15px rgba(255, 23, 68, 0.4); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1.0); }
+}
+
+/* ====================================================
+   5. MULTI-DASHBOARD SUITE NAVIGATION
+   ==================================================== */
+.global-navbar {
+    display: flex;
+    gap: 10px;
+    background: rgba(16, 20, 30, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    padding: 6px;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.nav-tab {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    padding: 8px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-tab:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.nav-tab.active-tab {
+    background: rgba(0, 242, 254, 0.08);
+    border-color: var(--border-glow);
+    color: var(--cyan-neon);
+    box-shadow: 0 0 12px rgba(0, 242, 254, 0.1);
+}
+
+/* ====================================================
+   6. SPLIT LAYOUT FOR JUX intelligence & INVESTIGATION
+   ==================================================== */
+.split-dashboard-layout {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 15px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.split-left-panel, .split-right-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Operational CCTV Elements */
+.junction-selector-panel {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.junction-selector-panel label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+}
+
+.select-dropdown {
+    background: #0f121d;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--cyan-neon);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+}
+
+.select-dropdown:focus {
+    border-color: var(--cyan-neon);
+}
+
+.cctv-monitor-viewport {
+    flex-grow: 1;
+    background-color: #050608;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.telemetry-table-container {
+    padding: 10px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.telemetry-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    text-align: left;
+}
+
+.telemetry-table th {
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.telemetry-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* ====================================================
+   7. INVESTIGATION DASHBOARD SPECIFIC CLASSES
+   ==================================================== */
+.tickets-list-container {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding: 10px;
+}
+
+.ticket-item-card {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    padding: 12px 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.ticket-item-card:hover {
+    background: rgba(255, 255, 255, 0.035);
+    border-color: var(--cyan-neon);
+}
+
+.ticket-item-card.active-ticket {
+    background: rgba(0, 242, 254, 0.05);
+    border-color: var(--cyan-neon);
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.05);
+}
+
+.ticket-item-card .title-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.ticket-item-card .body-row {
+    font-size: 12.5px;
+    color: var(--text-primary);
+}
+
+.ticket-item-card .footer-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    color: var(--text-secondary);
+}
+
+/* Violation Replay Elements */
+.replay-workspace {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.replay-viewport {
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.replay-viewport img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.replay-timestamp-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--cyan-neon);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 242, 254, 0.2);
+    z-index: 5;
+}
+
+.replay-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-replay-action {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 6px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+}
+
+.btn-replay-action:hover {
+    background: rgba(0, 242, 254, 0.08);
+    border-color: var(--cyan-neon);
+    color: var(--cyan-neon);
+}
+
+.timeline-strip {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.timeline-thumbnail-box {
+    width: calc(20% - 6px);
+    aspect-ratio: 16/9;
+    background: #080a10;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.timeline-thumbnail-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.timeline-thumbnail-box.active-thumb {
+    border-color: var(--cyan-neon);
+    box-shadow: 0 0 6px rgba(0, 242, 254, 0.3);
+}
+
+.timeline-thumbnail-box .thumb-label {
+    position: absolute;
+    bottom: 2px;
+    right: 3px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    font-size: 8px;
+    padding: 1px 3px;
+    border-radius: 2px;
+}
+
+.crops-box-row {
+    display: flex;
+    gap: 15px;
+}
+
+.crop-card-field {
+    flex-grow: 1;
+    width: 50%;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+}
+
+.crop-card-field img {
+    max-height: 90px;
+    max-width: 100%;
+    border-radius: 4px;
+    margin-top: 5px;
+    border: 1px solid rgba(0,0,0,0.5);
+}
+
+.crop-card-field .label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* ====================================================
+   8. ANALYTICS DASHBOARD GRAPH SYSTEM
+   ==================================================== */
+.analytics-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.analytics-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 15px;
+    overflow: hidden;
+}
+
+.chart-viewport {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Risk index list widget */
+.risk-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.risk-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.risk-score-bar-bg {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.risk-score-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+}

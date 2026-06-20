@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRIDLOCK AI - Smart City Command Center</title>
+    <!-- Modern Google Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <!-- Custom StyleSheet -->
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <!-- Main Grid Workspace Container -->
+    <div class="command-center-layout">
+
+        <!-- Global Navigation Navbar -->
+        <nav class="global-navbar">
+            <a href="/" class="nav-tab active-tab">City Command Center</a>
+            <a href="/junction_monitor.html" class="nav-tab">Live CCTV Intelligence</a>
+            <a href="/investigation_dashboard.html" class="nav-tab">Investigation Center</a>
+            <a href="/enforcement_dashboard.html" class="nav-tab">Enforcement Desk</a>
+            <a href="/analytics_dashboard.html" class="nav-tab">Analytics & Predictions</a>
+        </nav>
+
+        <!-- 1. Header HUD Panel -->
+        <header class="hud-header">
+            <div class="header-logo">
+                <span class="logo-accent">GRIDLOCK</span> AI
+                <span class="badge-twin">COMMISSIONER VIEW</span>
+            </div>
+            <div class="header-widgets">
+                <div class="widget-item">
+                    <span class="label">SYSTEM STATUS</span>
+                    <span class="val status-glowing" id="sys-status">ONLINE</span>
+                </div>
+                <div class="widget-item">
+                    <span class="label">ACTIVE CAMERAS</span>
+                    <span class="val" id="active-cams">3 / 3</span>
+                </div>
+                <div class="widget-item">
+                    <span class="label">CURRENT TIME</span>
+                    <span class="val font-mono" id="clock-display">00:00:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Workspace -->
+        <main class="grid-container" style="grid-template-rows: 1fr; height: calc(100vh - 120px);">
+
+            <!-- Card: Junction status summary (Left Column) -->
+            <section class="grid-card junction-registry-card">
+                <div class="card-header">
+                    <h2>TRAFFIC CAMERA REGISTRY</h2>
+                </div>
+                <div class="alerts-viewport" id="junction-registry-list" style="padding: 10px;">
+                    <!-- Will be populated dynamically by dashboard.js -->
+                    <div style="text-align: center; color: var(--text-secondary); margin-top: 30px;">Loading camera streams...</div>
+                </div>
+            </section>
+
+            <!-- Card: Leaflet Map Panel (Center Column) -->
+            <section class="grid-card map-card">
+                <div class="card-header">
+                    <h2>CITY DIGITAL TWIN MAP</h2>
+                    <div class="heatmap-controls">
+                        <button class="btn-toggle active" id="btn-density" onclick="switchHeatmap('density')">DENSITY</button>
+                        <button class="btn-toggle" id="btn-violations" onclick="switchHeatmap('violations')">VIOLATIONS</button>
+                        <button class="btn-toggle" id="btn-risk" onclick="switchHeatmap('risk')">RISK</button>
+                    </div>
+                </div>
+                <div class="map-viewport" id="map-container"></div>
+            </section>
+
+            <!-- Card: Alert Timeline Panel (Right Column) -->
+            <section class="grid-card alerts-card">
+                <div class="card-header">
+                    <h2>REAL-TIME EVENT TIMELINE</h2>
+                    <span class="badge-alert" id="alerts-count">0 ACTIVE</span>
+                </div>
+                <div class="alerts-viewport" id="alerts-timeline">
+                    <!-- Notifications will slide in here dynamically -->
+                    <div class="empty-alerts">Monitoring traffic feeds for anomalies...</div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Script Import -->
+    <script src="dashboard.js"></script>
+</body>
+</html>

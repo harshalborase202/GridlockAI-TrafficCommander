@@ -1,0 +1,40 @@
+{
+    "junctions": [
+        {
+            "id": "koramangala_3rd_block",
+            "name": "Koramangala 3rd Block",
+            "lat": 12.9343,
+            "lng": 77.6244,
+            "congestion_level": 42,
+            "vehicle_count": 84,
+            "active_violations": 2,
+            "average_speed": 45.2,
+            "cctv_feed_url": "/api/stream/koramangala_3rd_block",
+            "risk_score": 35
+        },
+        {
+            "id": "silk_board_junction",
+            "name": "Silk Board Junction",
+            "lat": 12.9176,
+            "lng": 77.6241,
+            "congestion_level": 88,
+            "vehicle_count": 210,
+            "active_violations": 5,
+            "average_speed": 18.5,
+            "cctv_feed_url": "/api/stream/silk_board_junction",
+            "risk_score": 85
+        },
+        {
+            "id": "indiranagar_100ft_road",
+            "name": "Indiranagar 100ft Road",
+            "lat": 12.9719,
+            "lng": 77.6412,
+            "congestion_level": 55,
+            "vehicle_count": 115,
+            "active_violations": 3,
+            "average_speed": 38.0,
+            "cctv_feed_url": "/api/stream/indiranagar_100ft_road",
+            "risk_score": 58
+        }
+    ]
+}

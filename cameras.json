@@ -1,0 +1,37 @@
+{
+    "cameras": [
+        {
+            "id": "cam_12",
+            "junction_id": "silk_board_junction",
+            "name": "Silk Board Junction",
+            "source": "output_tracked.mp4",
+            "lat": 12.9176,
+            "lng": 77.6241,
+            "speed_limit_kmph": 40,
+            "scale_meters_per_pixel": 0.08,
+            "coords": "12.9176, 77.6241"
+        },
+        {
+            "id": "cam_13",
+            "junction_id": "koramangala_3rd_block",
+            "name": "Koramangala 3rd Block",
+            "source": "test_simulation.mp4",
+            "lat": 12.9343,
+            "lng": 77.6244,
+            "speed_limit_kmph": 50,
+            "scale_meters_per_pixel": 0.07,
+            "coords": "12.9343, 77.6244"
+        },
+        {
+            "id": "cam_14",
+            "junction_id": "indiranagar_100ft_road",
+            "name": "Indiranagar 100ft Road",
+            "source": "test_simulation.mp4",
+            "lat": 12.9719,
+            "lng": 77.6412,
+            "speed_limit_kmph": 60,
+            "scale_meters_per_pixel": 0.09,
+            "coords": "12.9719, 77.6412"
+        }
+    ]
+}

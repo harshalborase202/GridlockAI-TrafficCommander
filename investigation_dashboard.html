@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRIDLOCK AI - Investigation & Evidence Portal</title>
+    <!-- Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <div class="command-center-layout">
+
+        <!-- Global Navigation Navbar -->
+        <nav class="global-navbar">
+            <a href="/" class="nav-tab">City Command Center</a>
+            <a href="/junction_monitor.html" class="nav-tab">Live CCTV Intelligence</a>
+            <a href="/investigation_dashboard.html" class="nav-tab active-tab">Investigation Center</a>
+            <a href="/enforcement_dashboard.html" class="nav-tab">Enforcement Desk</a>
+            <a href="/analytics_dashboard.html" class="nav-tab">Analytics & Predictions</a>
+        </nav>
+
+        <!-- Header HUD Panel -->
+        <header class="hud-header">
+            <div class="header-logo">
+                <span class="logo-accent">GRIDLOCK</span> AI
+                <span class="badge-twin">COMPLIANCE REVIEW PORTAL</span>
+            </div>
+            <div class="header-widgets">
+                <div class="widget-item">
+                    <span class="label">SYSTEM STATUS</span>
+                    <span class="val status-glowing" id="sys-status">ONLINE</span>
+                </div>
+                <div class="widget-item">
+                    <span class="label">TOTAL REGISTERED CASES</span>
+                    <span class="val" id="tickets-count">0 CASES</span>
+                </div>
+                <div class="widget-item">
+                    <span class="label">CURRENT TIME</span>
+                    <span class="val font-mono" id="clock-display">00:00:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Split Workspace Layout -->
+        <div class="split-dashboard-layout">
+
+            <!-- Left Panel: Scrolling Log of Violation Tickets -->
+            <div class="split-left-panel">
+                <section class="grid-card" style="height: 100%;">
+                    <div class="card-header">
+                        <h2>TICKETS INBOX LOGS</h2>
+                    </div>
+                    <div class="tickets-list-container" id="tickets-list-container">
+                        <div style="text-align: center; color: var(--text-secondary); margin-top: 50px;">Loading ticket registers...</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Panel: Dossier compliance review workplace -->
+            <div class="split-right-panel" id="dossier-workspace-panel" style="display: none;">
+                <section class="grid-card" style="height: 100%; overflow: auto;">
+                    <div class="card-header">
+                        <h2>EVIDENCE DOSSIER & PROOF OF VIOLATION REPLAY</h2>
+                        <span class="junction-label font-mono" id="dossier-ticket-id">TKT_xxxx</span>
+                    </div>
+                    
+                    <div class="replay-workspace">
+                        
+                        <!-- 1. Violation Replay Viewport -->
+                        <div class="replay-viewport">
+                            <span class="replay-timestamp-tag font-mono" id="replay-frame-tag">FRAME: T-2</span>
+                            <img id="replay-player-img" src="" alt="Violation Replay Snapshot">
+                        </div>
+
+                        <!-- 2. Replay Player control buttons -->
+                        <div class="replay-controls">
+                            <button class="btn-replay-action" onclick="stepFrame(-1)">PREV</button>
+                            <button class="btn-replay-action" id="btn-play-pause" onclick="toggleReplay()">PLAY</button>
+                            <button class="btn-replay-action" onclick="resetReplay()">RESET</button>
+                            <button class="btn-replay-action" onclick="stepFrame(1)">NEXT</button>
+                        </div>
+
+                        <!-- 3. Evidence Timeline Thumbnails -->
+                        <div class="timeline-strip">
+                            <div class="timeline-thumbnail-box" id="thumb-0" onclick="jumpToFrame(0)">
+                                <img id="thumb-img-0" src="" alt="T-2">
+                                <span class="thumb-label font-mono">T-2</span>
+                            </div>
+                            <div class="timeline-thumbnail-box" id="thumb-1" onclick="jumpToFrame(1)">
+                                <img id="thumb-img-1" src="" alt="T-1">
+                                <span class="thumb-label font-mono">T-1</span>
+                            </div>
+                            <div class="timeline-thumbnail-box" id="thumb-2" onclick="jumpToFrame(2)">
+                                <img id="thumb-img-2" src="" alt="T">
+                                <span class="thumb-label font-mono">T (VIOL)</span>
+                            </div>
+                            <div class="timeline-thumbnail-box" id="thumb-3" onclick="jumpToFrame(3)">
+                                <img id="thumb-img-3" src="" alt="T+1">
+                                <span class="thumb-label font-mono">T+1</span>
+                            </div>
+                            <div class="timeline-thumbnail-box" id="thumb-4" onclick="jumpToFrame(4)">
+                                <img id="thumb-img-4" src="" alt="T+2">
+                                <span class="thumb-label font-mono">T+2</span>
+                            </div>
+                        </div>
+
+                        <!-- 4. Crops grid details -->
+                        <div class="crops-box-row">
+                            <div class="crop-card-field">
+                                <span class="label">VEHICLE FOCUS CROP</span><br>
+                                <img id="crop-vehicle-img" src="" alt="Vehicle Crop">
+                            </div>
+                            <div class="crop-card-field" style="position: relative;">
+                                <span class="label">ANPR LICENSE PLATE CROP</span><br>
+                                <div style="position: relative; display: inline-block;">
+                                    <img id="crop-plate-img" src="" alt="Plate Crop" style="display: block;">
+                                    <div id="ocr-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(10, 14, 26, 0.85); color: var(--accent-cyan); font-family: monospace; font-size: 11px; font-weight: 600; text-align: center; padding: 2px 0; border-top: 1px solid var(--accent-cyan); display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Ticket details parameters -->
+                        <div class="evidence-metadata-grid" style="margin-top: 5px; padding: 12px; grid-template-columns: 1fr 1fr;">
+                            <div class="meta-field"><span class="label">License Plate:</span> <span class="val text-yellow" id="meta-plate-no">-</span></div>
+                            <div class="meta-field"><span class="label">Violation Type:</span> <span class="val text-red" id="meta-violation-type">-</span></div>
+                            <div class="meta-field"><span class="label">Junction Location:</span> <span class="val" id="meta-location">-</span></div>
+                            <div class="meta-field"><span class="label">OCR Confidence:</span> <span class="val text-green" id="meta-confidence">-</span></div>
+                            <div class="meta-field" style="grid-column: span 2;"><span class="label">Timestamp:</span> <span class="val font-mono" id="meta-timestamp">-</span></div>
+                        </div>
+
+                        <!-- 6. Vehicle Infraction History Log -->
+                        <div style="margin-top: 5px;">
+                            <h3 style="font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; letter-spacing: 0.5px; text-transform: uppercase;">
+                                Vehicle Offense History Log (Plate matches)
+                            </h3>
+                            <table class="telemetry-table" style="background: rgba(0,0,0,0.15); border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.03);">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 6px 10px;">TICKET ID</th>
+                                        <th style="padding: 6px 10px;">DATE / TIME</th>
+                                        <th style="padding: 6px 10px;">INFRACTION LOCATION</th>
+                                        <th style="padding: 6px 10px;">VIOLATION TYPE</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-tbody">
+                                    <tr>
+                                        <td colspan="4" class="table-empty" style="padding: 15px !important;">No historic violations logged for this vehicle.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+
+            <!-- Empty review placeholder when no ticket is loaded -->
+            <div class="split-right-panel" id="dossier-empty-placeholder">
+                <section class="grid-card" style="height: 100%; display: flex; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <div>
+                        <div style="font-size: 40px; color: var(--text-secondary); margin-bottom: 15px;">📂</div>
+                        <h2 style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">SELECT A DOSSIER TO AUDIT</h2>
+                        <p style="font-size: 12px; color: var(--text-secondary); max-width: 320px;">
+                            Choose an active case card from the left-hand inbox list to load evidence loop frames, crop dossiers, OCR outputs, and vehicle history registries.
+                        </p>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="investigation_dashboard.js"></script>
+</body>
+</html>

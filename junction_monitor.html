@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRIDLOCK AI - Live CCTV Intelligence</title>
+    <meta name="description" content="Real-time CCTV feed with YOLOv8 vehicle detection and ByteTrack tracking overlays.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        /* ── CCTV viewport ─────────────────────────────── */
+        .cctv-monitor-viewport {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+
+        /* The MJPEG img fills the container completely */
+        #cctv-mjpeg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Scanline + meta text on top of real video */
+        .cctv-scanline {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 3px,
+                rgba(0, 0, 0, 0.03) 3px,
+                rgba(0, 0, 0, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .cctv-overlay-text {
+            position: absolute;
+            bottom: 8px;
+            left: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: rgba(0, 220, 255, 0.85);
+            z-index: 3;
+            pointer-events: none;
+            text-shadow: 0 0 6px rgba(0,220,255,0.6);
+        }
+
+        .stream-status-badge {
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            z-index: 4;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.05em;
+            pointer-events: none;
+        }
+        .stream-status-badge.live {
+            background: rgba(0, 200, 80, 0.15);
+            border: 1px solid rgba(0, 200, 80, 0.5);
+            color: #00c850;
+        }
+        .stream-status-badge.connecting {
+            background: rgba(255, 180, 0, 0.15);
+            border: 1px solid rgba(255, 180, 0, 0.4);
+            color: #ffb400;
+        }
+
+        /* ── Telemetry table ───────────────────────────── */
+        .text-red    { color: #ff1744; }
+        .text-green  { color: #00e676; }
+        .text-orange { color: #ff9100; }
+        .text-cyan   { color: #00e5ff; }
+
+        .vehicle-count-badge {
+            display: inline-block;
+            background: rgba(0,229,255,0.12);
+            border: 1px solid rgba(0,229,255,0.3);
+            color: #00e5ff;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* Telemetry table cell widths */
+        .telemetry-table th:nth-child(3),
+        .telemetry-table td:nth-child(3) { width: 110px; }
+    </style>
+</head>
+<body>
+
+    <div class="command-center-layout">
+
+        <!-- Global Navigation Navbar -->
+        <nav class="global-navbar">
+            <a href="/" class="nav-tab">City Command Center</a>
+            <a href="/junction_monitor.html" class="nav-tab active-tab">Live CCTV Intelligence</a>
+            <a href="/investigation_dashboard.html" class="nav-tab">Investigation Center</a>
+            <a href="/enforcement_dashboard.html" class="nav-tab">Enforcement Desk</a>
+            <a href="/analytics_dashboard.html" class="nav-tab">Analytics &amp; Predictions</a>
+        </nav>
+
+        <!-- Header HUD Panel -->
+        <header class="hud-header">
+            <div class="header-logo">
+                <span class="logo-accent">GRIDLOCK</span> AI
+                <span class="badge-twin">LIVE CCTV INTELLIGENCE</span>
+            </div>
+            <div class="header-widgets">
+                <div class="widget-item">
+                    <span class="label">STREAM</span>
+                    <span class="val status-glowing" id="stream-status-hud">CONNECTING</span>
+                </div>
+                <div class="widget-item">
+                    <span class="label">VEHICLES ON SCREEN</span>
+                    <span class="val font-mono" id="vehicle-count-hud">0</span>
+                </div>
+                <div class="widget-item">
+                    <span class="label">CURRENT TIME</span>
+                    <span class="val font-mono" id="clock-display">00:00:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Junction Selection Bar -->
+        <section class="junction-selector-panel">
+            <label for="junction-select">SELECT MONITORING CAMERA:</label>
+            <select id="junction-select" class="select-dropdown" onchange="changeCameraFeed()">
+                <option value="cam_12" data-junction="silk_board_junction" selected>
+                    Silk Board Junction — Cam 12 | YOLO+ByteTrack LIVE
+                </option>
+                <option value="cam_13" data-junction="koramangala_3rd_block">
+                    Koramangala 3rd Block — Cam 13 | YOLO+ByteTrack LIVE
+                </option>
+                <option value="cam_14" data-junction="indiranagar_100ft_road">
+                    Indiranagar 100ft Road — Cam 14 | YOLO+ByteTrack LIVE
+                </option>
+            </select>
+        </section>
+
+        <!-- Split Grid Workspace -->
+        <div class="split-dashboard-layout">
+
+            <!-- Left Panel: Real MJPEG CCTV stream -->
+            <div class="split-left-panel">
+                <section class="grid-card" style="height:100%;">
+                    <div class="card-header">
+                        <h2>LIVE CCTV STREAM — YOLOv8 + ByteTrack OVERLAY</h2>
+                        <span class="junction-label font-mono" id="cctv-feed-label">Camera 12 — Silk Board Junction</span>
+                    </div>
+
+                    <div class="cctv-monitor-viewport">
+                        <!-- Real annotated MJPEG stream — bounding boxes drawn IN Python, not JS -->
+                        <img id="cctv-mjpeg-img"
+                             src="/stream/camera/cam_12"
+                             alt="Live CCTV Feed"
+                             loading="lazy"
+                             decoding="async"
+                             onerror="handleStreamError()"
+                             onload="handleStreamLoad()">
+
+                        <!-- CRT scanline aesthetic over real video -->
+                        <div class="cctv-scanline"></div>
+
+                        <!-- Stream status badge -->
+                        <div class="stream-status-badge connecting" id="stream-badge">● CONNECTING</div>
+
+                        <!-- Bottom meta text -->
+                        <div class="cctv-overlay-text font-mono" id="cctv-meta">
+                            RESOLUTION: 854×480 | AI: YOLOv8n | TRACKER: ByteTrack
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Panel: Live Vehicle Telemetry from WebSocket -->
+            <div class="split-right-panel">
+                <section class="grid-card" style="height:100%;">
+                    <div class="card-header">
+                        <h2>
+                            LIVE VEHICLE TELEMETRY
+                            <span class="vehicle-count-badge" id="telemetry-count-badge">0 vehicles</span>
+                        </h2>
+                        <span class="badge-alert" id="telemetry-speed-limit">LIMIT: 40 km/h</span>
+                    </div>
+                    <div class="telemetry-table-container">
+                        <table class="telemetry-table">
+                            <thead>
+                                <tr>
+                                    <th>TRACK ID</th>
+                                    <th>TYPE</th>
+                                    <th>SPEED</th>
+                                    <th>DIRECTION</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="telemetry-tbody">
+                                <tr>
+                                    <td colspan="5" class="table-empty">Connecting to camera WebSocket...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="junction_monitor.js"></script>
+</body>
+</html>

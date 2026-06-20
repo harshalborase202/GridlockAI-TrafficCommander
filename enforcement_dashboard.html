@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRIDLOCK AI - AI Enforcement Officer Desk</title>
+    <!-- Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        /* Specific adjustments for Enforcement desk */
+        .enforcement-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 15px;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .queue-card {
+            height: 33%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .explainability-box {
+            background: rgba(0, 242, 254, 0.03);
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            border-radius: 6px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .explain-item {
+            font-size: 11.5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .explain-item.item-pass { color: var(--green-mint); }
+        .explain-item.item-warn { color: var(--yellow-warning); }
+        .explain-item.item-fail { color: var(--red-neon); }
+        
+        .btn-approve-challan {
+            background: rgba(0, 230, 118, 0.08);
+            border: 1px solid rgba(0, 230, 118, 0.25);
+            color: var(--green-mint);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .btn-approve-challan:hover {
+            background: var(--green-mint);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.3);
+        }
+        .btn-discard-challan {
+            background: rgba(255, 23, 68, 0.08);
+            border: 1px solid rgba(255, 23, 68, 0.25);
+            color: var(--red-neon);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .btn-discard-challan:hover {
+            background: var(--red-neon);
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 23, 68, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="command-center-layout">
+
+        <!-- Global Navigation Navbar -->
+        <nav class="global-navbar">
+            <a href="/" class="nav-tab">City Command Center</a>
+            <a href="/junction_monitor.html" class="nav-tab">Live CCTV Intelligence</a>
+            <a href="/investigation_dashboard.html" class="nav-tab">Investigation Center</a>
+            <a href="/enforcement_dashboard.html" class="nav-tab active-tab">Enforcement Desk</a>
+            <a href="/analytics_dashboard.html" class="nav-tab">Analytics & Predictions</a>
+        </nav>
+
+        <!-- Header HUD Panel -->
+        <header class="hud-header">
+            <div class="header-logo">
+                <span class="logo-accent">GRIDLOCK</span> AI
+                <span class="badge-twin">ENFORCEMENT DESK</span>
+            </div>
+            <div class="header-widgets">
+                <div class="widget-item">
+                    <span class="label">ENFORCEMENT STATUS</span>
+                    <span class="val status-glowing" id="sys-status">ACTIVE COGNITION</span>
+                </div>
+                <div class="widget-item">
+                    <span class="label">REVIEW QUEUE SIZE</span>
+                    <span class="val" id="review-queue-count">0 PENDING</span>
+                </div>
+                <div class="widget-item">
+                    <span class="label">CURRENT TIME</span>
+                    <span class="val font-mono" id="clock-display">00:00:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Split Grid Workspace -->
+        <div class="enforcement-grid">
+
+            <!-- Left Panel: The Three Queues (Awaiting, Approved, Discarded) -->
+            <div class="split-left-panel" style="gap: 12px;">
+                
+                <!-- Queue 1: Awaiting Officer Review -->
+                <section class="grid-card queue-card" style="height: 38%;">
+                    <div class="card-header" style="padding: 8px 15px;">
+                        <h2 style="color: var(--yellow-warning);">AWAITING OFFICER REVIEW QUEUE</h2>
+                        <span class="badge-alert" id="badge-awaiting-count" style="background: rgba(255,234,0,0.08); border-color: rgba(255,234,0,0.2); color: var(--yellow-warning);">0 CASES</span>
+                    </div>
+                    <div class="cases-viewport">
+                        <table class="cases-table">
+                            <thead>
+                                <tr>
+                                    <th>TICKET ID</th>
+                                    <th>PLATE NO</th>
+                                    <th>LOCATION</th>
+                                    <th>VIOLATION</th>
+                                    <th>SCORE</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="awaiting-tbody">
+                                <tr>
+                                    <td colspan="6" class="table-empty">No tickets awaiting manual review.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Queue 2: Auto Approved Challans -->
+                <section class="grid-card queue-card" style="height: 31%;">
+                    <div class="card-header" style="padding: 8px 15px;">
+                        <h2 style="color: var(--green-mint);">AUTO APPROVED CHALLAN INDEX</h2>
+                        <span class="badge-twin" id="badge-approved-count">0 CHALLANS</span>
+                    </div>
+                    <div class="cases-viewport">
+                        <table class="cases-table">
+                            <thead>
+                                <tr>
+                                    <th>TICKET ID</th>
+                                    <th>VEHICLE PLATE</th>
+                                    <th>VIOLATION TYPE</th>
+                                    <th>FINE AMOUNT</th>
+                                    <th>EVIDENCE</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="approved-tbody">
+                                <tr>
+                                    <td colspan="6" class="table-empty">No challans auto-approved in this session.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Queue 3: System Discarded Logs -->
+                <section class="grid-card queue-card" style="height: 31%;">
+                    <div class="card-header" style="padding: 8px 15px;">
+                        <h2 style="color: var(--text-secondary);">DISCARDED / SYSTEM REJECTS LOGS</h2>
+                        <span class="badge-alert" id="badge-discarded-count" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); color: var(--text-secondary);">0 REJECTS</span>
+                    </div>
+                    <div class="cases-viewport">
+                        <table class="cases-table">
+                            <thead>
+                                <tr>
+                                    <th>TICKET ID</th>
+                                    <th>VEHICLE PLATE</th>
+                                    <th>VIOLATION</th>
+                                    <th>EVIDENCE SCORE</th>
+                                    <th>REJECTION REASON</th>
+                                </tr>
+                            </thead>
+                            <tbody id="discarded-tbody">
+                                <tr>
+                                    <td colspan="5" class="table-empty">No cases discarded by system.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Right Panel: Compliance Review Workspace -->
+            <div class="split-right-panel" id="review-workspace-panel" style="display: none;">
+                <section class="grid-card" style="height: 100%; overflow: auto;">
+                    <div class="card-header">
+                        <h2>EVIDENCE AUDIT DOSSIER</h2>
+                        <span class="junction-label font-mono" id="review-ticket-id">TKT_xxxx</span>
+                    </div>
+                    <div class="replay-workspace" style="gap: 10px; padding: 12px;">
+                        
+                        <!-- 1. Play loop -->
+                        <div class="replay-viewport" style="max-height: 160px;">
+                            <span class="replay-timestamp-tag font-mono" id="replay-frame-tag" style="font-size: 8px; padding: 2px 5px;">FRAME: T</span>
+                            <img id="replay-player-img" src="" alt="Violation Replay Snapshot">
+                        </div>
+
+                        <!-- 2. AI Explainability Panel -->
+                        <div style="margin-top: 2px;">
+                            <h3 style="font-size: 10px; font-weight: 800; color: var(--cyan-neon); margin-bottom: 6px; letter-spacing: 0.5px;">
+                                WHY AI CLASSIFIED THIS INFRACTION:
+                            </h3>
+                            <div class="explainability-box" id="explainability-container">
+                                <!-- Populated dynamically by enforcement_dashboard.js -->
+                            </div>
+                        </div>
+
+                        <!-- 3. Crops grid -->
+                        <div class="crops-box-row" style="gap: 10px;">
+                            <div class="crop-card-field" style="padding: 6px;">
+                                <span class="label" style="font-size: 9px;">VEHICLE CROP</span><br>
+                                <img id="crop-vehicle-img" src="" alt="Vehicle Crop" style="max-height: 60px;">
+                            </div>
+                            <div class="crop-card-field" style="padding: 6px; position: relative;">
+                                <span class="label" style="font-size: 9px;">ANPR PLATE CROP</span><br>
+                                <div style="position: relative; display: inline-block;">
+                                    <img id="crop-plate-img" src="" alt="Plate Crop" style="max-height: 60px; display: block;">
+                                    <div id="ocr-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(10, 14, 26, 0.85); color: var(--accent-cyan); font-family: monospace; font-size: 11px; font-weight: 600; text-align: center; padding: 2px 0; border-top: 1px solid var(--accent-cyan); display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Ticket parameters metadata -->
+                        <div class="evidence-metadata-grid" style="padding: 8px; font-size: 11px; margin-top: 2px;">
+                            <div class="meta-field"><span class="label" style="width: 80px;">License:</span> <span class="val text-yellow" id="meta-plate-no">-</span></div>
+                            <div class="meta-field"><span class="label" style="width: 80px;">Violation:</span> <span class="val text-red" id="meta-violation-type">-</span></div>
+                            <div class="meta-field"><span class="label" style="width: 80px;">Location:</span> <span class="val" id="meta-location">-</span></div>
+                            <div class="meta-field" style="display: flex; align-items: center; gap: 10px; grid-column: span 1;">
+                                <span class="label" style="width: 80px;">Score:</span>
+                                <div id="gauge-container" style="width: 80px; height: 45px; position: relative; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="60" height="35" viewBox="0 0 60 35">
+                                        <path d="M 10,30 A 20,20 0 0,1 50,30" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4" stroke-linecap="round"></path>
+                                        <path id="gauge-fill" d="M 10,30 A 20,20 0 0,1 50,30" fill="none" stroke="var(--accent-cyan)" stroke-width="4" stroke-linecap="round" stroke-dasharray="62.8" stroke-dashoffset="62.8" style="transition: stroke-dashoffset 0.8s ease-in-out, stroke 0.8s;"></path>
+                                        <text id="gauge-text" x="30" y="26" fill="#fff" font-family="Inter" font-size="10" font-weight="600" text-anchor="middle">0%</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Manual audits action buttons -->
+                        <div class="replay-controls" style="margin-top: 10px; gap: 15px;" id="action-controls-row">
+                            <button class="btn-discard-challan" onclick="triggerOfficerDiscard()">DISCARD CASE</button>
+                            <button class="btn-approve-challan" onclick="triggerOfficerApproval()">APPROVE CHALLAN</button>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+
+            <!-- Empty review placeholder -->
+            <div class="split-right-panel" id="review-empty-placeholder">
+                <section class="grid-card" style="height: 100%; display: flex; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <div>
+                        <div style="font-size: 40px; color: var(--text-secondary); margin-bottom: 15px;">🛡️</div>
+                        <h2 style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">AWAITING CASE SELECTION</h2>
+                        <p style="font-size: 11.5px; color: var(--text-secondary); max-width: 280px;">
+                            Select a pending case card from the Awaiting Review queue to audit AI explainability logs, crops, and issue final challan decisions.
+                        </p>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="enforcement_dashboard.js"></script>
+</body>
+</html>

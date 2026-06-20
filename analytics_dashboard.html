@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRIDLOCK AI - Analytics & Predictive Analytics Center</title>
+    <!-- Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <div class="command-center-layout">
+
+        <!-- Global Navigation Navbar -->
+        <nav class="global-navbar">
+            <a href="/" class="nav-tab">City Command Center</a>
+            <a href="/junction_monitor.html" class="nav-tab">Live CCTV Intelligence</a>
+            <a href="/investigation_dashboard.html" class="nav-tab">Investigation Center</a>
+            <a href="/enforcement_dashboard.html" class="nav-tab">Enforcement Desk</a>
+            <a href="/analytics_dashboard.html" class="nav-tab active-tab">Analytics & Predictions</a>
+        </nav>
+
+        <!-- Header HUD Panel -->
+        <header class="hud-header">
+            <div class="header-logo">
+                <span class="logo-accent">GRIDLOCK</span> AI
+                <span class="badge-twin">PREDICTIVE ANALYTICS</span>
+            </div>
+            <div class="header-widgets">
+                <div class="widget-item">
+                    <span class="label">SYSTEM STATUS</span>
+                    <span class="val status-glowing" id="sys-status">ONLINE</span>
+                </div>
+                <div class="widget-item">
+                    <span class="label">ANALYTICS ENGINES</span>
+                    <span class="val" id="active-cams">MA FORECAST ACTIVE</span>
+                </div>
+                <div class="widget-item">
+                    <span class="label">CURRENT TIME</span>
+                    <span class="val font-mono" id="clock-display">00:00:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Analytics Grid Workspace -->
+        <div class="analytics-layout">
+
+            <!-- Left Column: Violation trends and Congestion line charts -->
+            <div class="analytics-column">
+                <section class="grid-card" style="height: 50%;">
+                    <div class="card-header">
+                        <h2>VIOLATION TRENDS BY INFRACTION TYPE</h2>
+                        <span class="badge-engine">TODAY LOG SCALE</span>
+                    </div>
+                    <div class="chart-viewport" style="display: flex; justify-content: center; align-items: center;">
+                        <canvas id="violation-trends-canvas" style="width: 100%; height: 100%; max-height: 180px;"></canvas>
+                    </div>
+                </section>
+                
+                <section class="grid-card" style="height: 50%;">
+                    <div class="card-header">
+                        <h2>CONGESTION SWINGS (PAST HOUR)</h2>
+                        <span class="badge-engine" id="congestion-graph-label">SILK BOARD JUNCTION</span>
+                    </div>
+                    <div class="chart-viewport" style="display: flex; justify-content: center; align-items: center;">
+                        <canvas id="congestion-trends-canvas" style="width: 100%; height: 100%; max-height: 180px;"></canvas>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Predictive Congestion widget and Risk Indices -->
+            <div class="analytics-column">
+                <!-- Predictive Congestion Card -->
+                <section class="grid-card" style="height: 50%;">
+                    <div class="card-header">
+                        <h2>PREDICTIVE CONGESTION STATUS (ML MA INTERPOLATION)</h2>
+                        <select id="predictions-junction-select" class="select-dropdown" style="font-size: 10px; padding: 4px 8px;" onchange="changePredictionsJunction()">
+                            <option value="silk_board_junction" selected>Silk Board Junction</option>
+                            <option value="koramangala_3rd_block">Koramangala 3rd Block</option>
+                            <option value="indiranagar_100ft_road">Indiranagar 100ft Road</option>
+                        </select>
+                    </div>
+                    <div class="predictor-viewport" style="padding: 20px;">
+                        <div class="predictor-row">
+                            <div class="p-block" style="padding: 10px 15px;">
+                                <span class="label">CURRENT LEVEL</span>
+                                <span class="val val-neutral" id="pred-current-level" style="font-size: 24px;">0%</span>
+                                <span class="status-badge" id="pred-current-status" style="top: calc(50% - 12px);">LOW</span>
+                            </div>
+                        </div>
+                        <div class="predictor-row flex-row" style="margin-top: 10px;">
+                            <div class="p-block inline" style="padding: 10px 15px;">
+                                <span class="label">IN 15 MINUTES</span>
+                                <span class="val font-mono" id="pred-15-level" style="font-size: 20px;">0%</span>
+                                <span class="status-badge" id="pred-15-status" style="right: 10px; font-size: 8px; padding: 2px 5px;">LOW</span>
+                            </div>
+                            <div class="p-block inline" style="padding: 10px 15px;">
+                                <span class="label">IN 30 MINUTES</span>
+                                <span class="val font-mono" id="pred-30-level" style="font-size: 20px;">0%</span>
+                                <span class="status-badge" id="pred-30-status" style="right: 10px; font-size: 8px; padding: 2px 5px;">LOW</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Smart City Risk Ratings Card -->
+                <section class="grid-card" style="height: 50%;">
+                    <div class="card-header">
+                        <h2>SMART CITY INFRASTRUCTURE RISK INDEX</h2>
+                        <span class="badge-alert" style="background: rgba(255,145,0,0.08); border-color: rgba(255,145,0,0.25); color: var(--orange-alert);">ACTIVE ASSESSMENTS</span>
+                    </div>
+                    <div class="predictor-viewport" style="justify-content: flex-start; overflow-y: auto; padding: 15px;">
+                        <table class="risk-table">
+                            <tbody id="risk-tbody">
+                                <!-- Populated dynamically by analytics_dashboard.js -->
+                                <tr>
+                                    <td class="table-empty">Loading active risk index data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="analytics_dashboard.js"></script>
+</body>
+</html>
