@@ -750,5 +750,7 @@ def analytics_congestion_history(cam_id: str, n: int = Query(60, ge=1, le=500)):
 
 if __name__ == "__main__":
     import uvicorn
-    print("[FastAPI] Starting GRIDLOCK AI Command Center on http://localhost:5000 ...")
-    uvicorn.run(app, host="127.0.0.1", port=5000)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    print(f"[FastAPI] Starting GRIDLOCK AI Command Center on http://0.0.0.0:{port} ...")
+    uvicorn.run(app, host="0.0.0.0", port=port)
